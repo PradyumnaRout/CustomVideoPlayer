@@ -27,7 +27,7 @@ struct PlayerControlButtons: View {
     @Binding var avPlayer: AVPlayer
     
     // Other Properties
-    let timeCodes: [Timecode]
+    let timecodes: [Timecode]
     private var currentTimeText: String {
         if let duration = avPlayer.currentItem?.duration.seconds {
             let currentTimeInSeconds = Double(sliderValue) * duration
