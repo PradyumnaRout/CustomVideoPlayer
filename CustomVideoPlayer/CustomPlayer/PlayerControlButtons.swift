@@ -25,6 +25,7 @@ struct PlayerControlButtons: View {
     // Enable/Disable full screen player mode
     @Binding var isPlayerFullScreen: Bool
     @Binding var avPlayer: AVPlayer
+    @Binding var currentPlayTime: CMTime?
     
     // Other Properties
     let timecodes: [Timecode]
@@ -55,7 +56,7 @@ struct PlayerControlButtons: View {
                     // Enable/Disable full screen mode.
                     Button {
                         isPlayerFullScreen.toggle()
-                        startTimer(timeInterval: 5)
+                        startTimer(timeInterval: 0)
                     } label: {
                         Image(systemName: isPlayerFullScreen ? "xmark" : "arrow.up.left.and.arrow.down.right")
                             .frame(height: 20)
@@ -67,7 +68,7 @@ struct PlayerControlButtons: View {
                     Button {
                         soundOff.toggle()
                         avPlayer.isMuted = soundOff
-                        startTimer(timeInterval: 5)
+                        startTimer(timeInterval: 0)
                     } label: {
                         Image(systemName: soundOff ? "speaker.slash.fill" : "speaker.wave.2.fill")
                             .font(.system(size: 18))
@@ -79,7 +80,7 @@ struct PlayerControlButtons: View {
                 HStack {
                     Button {
                         seekBackward()
-                        startTimer(timeInterval: 5)
+                        startTimer(timeInterval: 0)
                     } label: {
                         Image(systemName: "gobackward.10")
                             .font(.title)
@@ -94,7 +95,7 @@ struct PlayerControlButtons: View {
                         } else {
                             isPlaying = true
                             avPlayer.play()
-                            startTimer(timeInterval: 5)
+                            startTimer(timeInterval: 0)
                         }
                     } label: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
@@ -104,7 +105,7 @@ struct PlayerControlButtons: View {
                     Spacer()
                     Button {
                         seekForward()
-                        startTimer(timeInterval: 5)
+                        startTimer(timeInterval: 0)
                     } label: {
                         Image(systemName: "goforward.10")
                             .font(.title)
@@ -119,12 +120,13 @@ struct PlayerControlButtons: View {
                         value: $sliderValue,
                         avPlayer: $avPlayer,
                         isPlaying: $isPlaying,
+                        currentPlayTime: $currentPlayTime,
                         timecodes: timecodes
                     )
                     .gesture(
                         DragGesture()
                             .onChanged { _ in
-                                startTimer(timeInterval: 5)
+                                startTimer(timeInterval: 0)
                             }
                     )
                     HStack {
@@ -137,6 +139,11 @@ struct PlayerControlButtons: View {
             .padding(.horizontal, screenWidth * 0.03)
             .padding(.vertical, screenHeight * 0.03)
             .background(Color.black.opacity(0.4))
+            .onAppear {
+                if isPlaying {
+                    avPlayer.play()
+                }
+            }
         }
     }
     

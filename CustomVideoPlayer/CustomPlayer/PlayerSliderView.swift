@@ -13,6 +13,7 @@ struct PlayerSliderView: UIViewRepresentable {
     @Binding var value: Float
     @Binding var avPlayer: AVPlayer
     @Binding var isPlaying: Bool
+    @Binding var currentPlayTime: CMTime?
     
     let timecodes: [Timecode]
         
@@ -54,7 +55,9 @@ struct PlayerSliderView: UIViewRepresentable {
     func updateSliderValue() {
         let currentTime = avPlayer.currentTime()
         let duration = avPlayer.currentItem?.duration ?? CMTime.zero
-        
+        self.currentPlayTime = currentTime
+        debugPrint("Target Time: \(currentTime)")
+        print(" Value: \(value)")
         if !duration.isIndefinite {
             let value = Float(CMTimeGetSeconds(currentTime) / CMTimeGetSeconds(duration))
             self.value = value
@@ -86,6 +89,7 @@ struct PlayerSliderView: UIViewRepresentable {
         @objc func changed(slider: UISlider) {
             let duration = parent.avPlayer.currentItem?.duration.seconds ?? 0
             let targetTime = CMTime(seconds: Double(slider.value) * duration, preferredTimescale: 1)
+//            debugPrint("Target Time: \(targetTime)")
             parent.avPlayer.seek(to: targetTime)
         }
 
