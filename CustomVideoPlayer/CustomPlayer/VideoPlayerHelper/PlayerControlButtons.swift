@@ -26,10 +26,19 @@ struct PlayerControlButtons: View {
     @Binding var isPlayerFullScreen: Bool
     @Binding var avPlayer: AVPlayer
     @Binding var currentPlayTime: CMTime?
+    @Binding var showPIP: Bool
     
     // Other Properties
     let timecodes: [Timecode]
     private var currentTimeText: String {
+//        if let currentPlayTime = currentPlayTime,
+//           currentPlayTime != .zero,
+//           let duration = avPlayer.currentItem?.duration.seconds,
+//           !isPlayerFullScreen,
+//           duration > 0 {
+//            let currentTimeInSeconds = currentPlayTime.seconds
+//            return formatTime(currentTimeInSeconds)
+//        } else
         if let duration = avPlayer.currentItem?.duration.seconds {
             let currentTimeInSeconds = Double(sliderValue) * duration
             return formatTime(currentTimeInSeconds)
@@ -63,6 +72,19 @@ struct PlayerControlButtons: View {
                             .font(.system(size: 20))
                             .foregroundStyle(.white)
                     }
+                    
+                    if showPIP {
+                        Button {
+//                            enablePIP.toggle()
+//                            print("PIP enable: \(enablePIP)")
+                        } label: {
+                            Image(systemName: "pip.enter")
+                                .font(.title)
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                    }
+                    
                     Spacer()
                     // On/Off Sound.
                     Button {
@@ -140,10 +162,36 @@ struct PlayerControlButtons: View {
             .padding(.vertical, screenHeight * 0.03)
             .background(Color.black.opacity(0.4))
             .onAppear {
+                do {
+                    try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+                    try AVAudioSession.sharedInstance().setActive(true)
+                    print("Audio session configured successfully")
+                } catch {
+                    print("Audio session configuration failed: \(error)")
+                }
+                
+//                if currentPlayTime != nil && currentPlayTime != .zero &&  {
+//                    let duration = avPlayer.currentItem?.duration ?? CMTime.zero
+//                    sliderValue = Float(CMTimeGetSeconds(currentPlayTime!) / CMTimeGetSeconds(duration))
+//                }
+                
+//                seekToPreviousTime()
+                
                 if isPlaying {
                     avPlayer.play()
                 }
+                
+                // Observe when video ends
+                NotificationCenter.default.addObserver(
+                    forName: .AVPlayerItemDidPlayToEndTime,
+                    object: avPlayer.currentItem,
+                    queue: .main
+                ) { _ in
+                    isPlaying = false
+                    avPlayer.seek(to: .zero)  // Optional: reset player to beginning
+                }
             }
+            
         }
     }
     
@@ -184,6 +232,13 @@ struct PlayerControlButtons: View {
         let currentTime = avPlayer.currentTime()
         let newTime = CMTimeSubtract(currentTime, CMTime(seconds: 10, preferredTimescale: 1))
         avPlayer.seek(to: newTime)
+    }
+    
+    private func seekToPreviousTime() {
+        if currentPlayTime != nil && currentPlayTime != .zero {
+            let newTime = CMTimeSubtract(currentPlayTime!, CMTime(seconds: 0, preferredTimescale: 1))
+            avPlayer.seek(to: newTime)
+        }
     }
 }
 

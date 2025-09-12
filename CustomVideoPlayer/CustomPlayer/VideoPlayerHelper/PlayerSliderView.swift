@@ -56,7 +56,7 @@ struct PlayerSliderView: UIViewRepresentable {
         let currentTime = avPlayer.currentTime()
         let duration = avPlayer.currentItem?.duration ?? CMTime.zero
         self.currentPlayTime = currentTime
-        debugPrint("Target Time: \(currentTime)")
+//        debugPrint("Target Time: \(currentTime)")
         print(" Value: \(value)")
         if !duration.isIndefinite {
             let value = Float(CMTimeGetSeconds(currentTime) / CMTimeGetSeconds(duration))

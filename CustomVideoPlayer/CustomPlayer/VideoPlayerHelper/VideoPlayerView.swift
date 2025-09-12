@@ -13,12 +13,14 @@ struct VideoPlayerView: View {
     @State private var isPlaying = true
     @State private var showControls = true
     @State private var timer: Timer?
+    @State private var showPIP: Bool = true
     
     @State private var isPLayerFullScreen = false
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     
     @State var player: AVPlayer
     @Binding var currentPlayTime: CMTime?
+    
     let timecodes: [Timecode]
     
     var body: some View {
@@ -30,6 +32,7 @@ struct VideoPlayerView: View {
             isPlayerFullScreen: $isPLayerFullScreen,
             avPlayer: $player,
             currentPlayTime: $currentPlayTime,
+            showPIP: $showPIP,
             timecodes: timecodes
         )
         
@@ -40,7 +43,6 @@ struct VideoPlayerView: View {
                 if showControls {
                     controlButtons
                 }
-                
             }
             .padding(.top)
             .frame(height: frameHeight(for: orientation))
@@ -81,9 +83,11 @@ struct VideoPlayerView: View {
     }
     private func startTimer() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
-            withAnimation {
-                showControls = false
+        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+            DispatchQueue.main.async {
+                withAnimation {
+                    self.showControls = false
+                }
             }
         }
     }
