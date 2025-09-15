@@ -16,6 +16,7 @@ struct PlayerControlButtons: View {
     @State private var soundOff = false
     // Slider value
     @State private var sliderValue: Float = 0
+    @State private var isEditingSlider = false
     
     // Binding Properties
     @Binding var isPlaying: Bool
@@ -28,26 +29,28 @@ struct PlayerControlButtons: View {
     @Binding var currentPlayTime: CMTime?
     @Binding var showPIP: Bool
     @Binding var playFromPausePoint: Bool
+    @State var currentTimeText: String = "00:00"
     
     // Other Properties
     let timecodes: [Timecode]
-    private var currentTimeText: String {
-        if playFromPausePoint {
-            print("Inside Current Time")
-            if let currentPlayTime = currentPlayTime,
-               currentPlayTime != .zero,
-               let duration = avPlayer.currentItem?.duration.seconds,
-               !isPlayerFullScreen,
-               duration > 0 {
-                let currentTimeInSeconds = currentPlayTime.seconds
-                return formatTime(currentTimeInSeconds)
-            }
-        } else if let duration = avPlayer.currentItem?.duration.seconds {
-            let currentTimeInSeconds = Double(sliderValue) * duration
-            return formatTime(currentTimeInSeconds)
-        }
-        return "00.00"
-    }
+//    private var currentTimeText: String {
+//        if playFromPausePoint {
+//            print("Inside Current Time")
+//            if let currentPlayTime = currentPlayTime,
+//               currentPlayTime != .zero,
+//               let duration = avPlayer.currentItem?.duration.seconds,
+//               !isPlayerFullScreen,
+//               duration > 0 {
+//                let currentTimeInSeconds = currentPlayTime.seconds
+//                return formatTime(currentTimeInSeconds)
+//            }
+//        }
+//        if let duration = avPlayer.currentItem?.duration.seconds {
+//            let currentTimeInSeconds = Double(sliderValue) * duration
+//            return formatTime(currentTimeInSeconds)
+//        }
+//        return "00.00"
+//    }
     
     private var timeLeftText: String {
         if let duration = avPlayer.currentItem?.duration.seconds {
@@ -93,7 +96,7 @@ struct PlayerControlButtons: View {
                     Button {
                         soundOff.toggle()
                         avPlayer.isMuted = soundOff
-                        startTimer(timeInterval: 0)
+                        startTimer(timeInterval: 3)
                     } label: {
                         Image(systemName: soundOff ? "speaker.slash.fill" : "speaker.wave.2.fill")
                             .font(.system(size: 18))
@@ -105,7 +108,7 @@ struct PlayerControlButtons: View {
                 HStack {
                     Button {
                         seekBackward()
-                        startTimer(timeInterval: 0)
+                        startTimer(timeInterval: 5)
                     } label: {
                         Image(systemName: "gobackward.10")
                             .font(.title)
@@ -130,7 +133,7 @@ struct PlayerControlButtons: View {
                     Spacer()
                     Button {
                         seekForward()
-                        startTimer(timeInterval: 0)
+                        startTimer(timeInterval: 5)
                     } label: {
                         Image(systemName: "goforward.10")
                             .font(.title)
@@ -146,13 +149,22 @@ struct PlayerControlButtons: View {
                         avPlayer: $avPlayer,
                         isPlaying: $isPlaying,
                         currentPlayTime: $currentPlayTime,
+                        isEditingSlider: $isEditingSlider,
+                        playFromPausePoint: $playFromPausePoint,
+                        currentTimeText: $currentTimeText,
+                        isPlayerFullScreen: $isPlayerFullScreen,
                         timecodes: timecodes
                     )
                     .gesture(
                         DragGesture()
                             .onChanged { _ in
-                                startTimer(timeInterval: 0)
+//                                startTimer(timeInterval: 5)
+                                isEditingSlider = true
                             }
+                            .onEnded({ _ in
+                                isEditingSlider = false
+                                startTimer(timeInterval: 5)
+                            })
                     )
                     HStack {
                         Text("\(currentTimeText) \\ \(timeLeftText)")
