@@ -27,19 +27,22 @@ struct PlayerControlButtons: View {
     @Binding var avPlayer: AVPlayer
     @Binding var currentPlayTime: CMTime?
     @Binding var showPIP: Bool
+    @Binding var playFromPausePoint: Bool
     
     // Other Properties
     let timecodes: [Timecode]
     private var currentTimeText: String {
-//        if let currentPlayTime = currentPlayTime,
-//           currentPlayTime != .zero,
-//           let duration = avPlayer.currentItem?.duration.seconds,
-//           !isPlayerFullScreen,
-//           duration > 0 {
-//            let currentTimeInSeconds = currentPlayTime.seconds
-//            return formatTime(currentTimeInSeconds)
-//        } else
-        if let duration = avPlayer.currentItem?.duration.seconds {
+        if playFromPausePoint {
+            print("Inside Current Time")
+            if let currentPlayTime = currentPlayTime,
+               currentPlayTime != .zero,
+               let duration = avPlayer.currentItem?.duration.seconds,
+               !isPlayerFullScreen,
+               duration > 0 {
+                let currentTimeInSeconds = currentPlayTime.seconds
+                return formatTime(currentTimeInSeconds)
+            }
+        } else if let duration = avPlayer.currentItem?.duration.seconds {
             let currentTimeInSeconds = Double(sliderValue) * duration
             return formatTime(currentTimeInSeconds)
         }
@@ -169,13 +172,16 @@ struct PlayerControlButtons: View {
                 } catch {
                     print("Audio session configuration failed: \(error)")
                 }
-                
-//                if currentPlayTime != nil && currentPlayTime != .zero &&  {
-//                    let duration = avPlayer.currentItem?.duration ?? CMTime.zero
-//                    sliderValue = Float(CMTimeGetSeconds(currentPlayTime!) / CMTimeGetSeconds(duration))
-//                }
-                
-//                seekToPreviousTime()
+                if playFromPausePoint {
+                    print("Inside OnAppear.")
+                    if currentPlayTime != nil && currentPlayTime != .zero {
+                        let duration = avPlayer.currentItem?.duration ?? CMTime.zero
+                        sliderValue = Float(CMTimeGetSeconds(currentPlayTime!) / CMTimeGetSeconds(duration))
+                    }
+                    
+                    seekToPreviousTime()
+                    playFromPausePoint = false
+                }
                 
                 if isPlaying {
                     avPlayer.play()

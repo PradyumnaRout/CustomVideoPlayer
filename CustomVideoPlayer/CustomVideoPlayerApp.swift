@@ -13,6 +13,7 @@ struct CustomVideoPlayerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+//            CustomPlayerWithControls()
         }
     }
 }

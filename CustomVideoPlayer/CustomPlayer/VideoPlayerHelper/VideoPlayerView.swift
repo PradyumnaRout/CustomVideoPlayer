@@ -20,6 +20,7 @@ struct VideoPlayerView: View {
     
     @State var player: AVPlayer
     @Binding var currentPlayTime: CMTime?
+    @Binding var playFromPausePoint: Bool
     
     let timecodes: [Timecode]
     
@@ -33,6 +34,7 @@ struct VideoPlayerView: View {
             avPlayer: $player,
             currentPlayTime: $currentPlayTime,
             showPIP: $showPIP,
+            playFromPausePoint: $playFromPausePoint,
             timecodes: timecodes
         )
         

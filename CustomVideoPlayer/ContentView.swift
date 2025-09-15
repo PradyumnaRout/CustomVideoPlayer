@@ -11,6 +11,7 @@ import AVKit
 struct ContentView: View {
     @StateObject var viewModel = PlayerViewModel()
     @State private var path = NavigationPath()
+    @State private var playFromPausePoint: Bool = false
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -18,6 +19,7 @@ struct ContentView: View {
                 ForEach(viewModel.videos) { video in
                     PlayerRowView(model: video)
                         .onTapGesture {
+                            playFromPausePoint = (video.currentPlayTime?.seconds ?? 0.0) > 0.0
                             path.append(video)
                         }
                 }
@@ -25,7 +27,7 @@ struct ContentView: View {
             }
             .navigationTitle("Play Video")
             .navigationDestination(for: PlayerModel.self) { model in
-                VideoHome(model: model, path: $path)
+                VideoHome(model: model, path: $path, playFromPausePoint: $playFromPausePoint)
             }
         }
     }
@@ -54,13 +56,15 @@ struct PlayerRowView: View {
 struct VideoHome: View {
     @ObservedObject var model: PlayerModel
     @Binding var path: NavigationPath
+    @Binding var playFromPausePoint: Bool
     
     // Your AVPlayer setup as before
     @State private var player: AVPlayer
     
-    init(model: PlayerModel, path: Binding<NavigationPath>) {
+    init(model: PlayerModel, path: Binding<NavigationPath>, playFromPausePoint: Binding<Bool>) {
         self.model = model
         self._path = path
+        self._playFromPausePoint = playFromPausePoint
         _player = State(initialValue: AVPlayer(url: URL(string: model.url)!))
     }
     
@@ -70,6 +74,7 @@ struct VideoHome: View {
             VideoPlayerView(
                 player: player,
                 currentPlayTime: $model.currentPlayTime,
+                playFromPausePoint: $playFromPausePoint,
                 timecodes: model.timecodes
             )
             TimecodeListView(player: player, timecodes: model.timecodes)

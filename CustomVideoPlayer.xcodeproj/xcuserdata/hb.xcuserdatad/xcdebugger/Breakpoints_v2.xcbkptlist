@@ -14,8 +14,8 @@
             filePath = "CustomVideoPlayer/CustomPlayer/VideoPlayerHelper/PlayerControlButtons.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -30,25 +30,9 @@
             filePath = "CustomVideoPlayer/CustomPlayer/VideoPlayerHelper/PlayerControlButtons.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "currentTimeText"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B7A5AD0D-1F33-4F51-9ADC-0223441F960C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CustomVideoPlayer/CustomPlayer/VideoPlayerHelper/PlayerControlButtons.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "174"
-            endingLineNumber = "174"
-            landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
