@@ -9,50 +9,48 @@ import SwiftUI
 import Foundation
 import AVKit
 
-class DashedSlider: UISlider {
+class DashedSliderView: UISlider {
     
-    var avPlayer: AVPlayer
-    let timecodes: [Timecode]
+    // Timecodes to show dashed markers
+    var timecodes: [Timecode] = []
     
-    init(avPlayer: AVPlayer, timecodes: [Timecode]) {
-        self.avPlayer = avPlayer
-        self.timecodes = timecodes
-        super.init(frame: .zero)
+    // Current progress (0.0 - 1.0)
+    var viewedProgress: CGFloat = 0.0 {
+        didSet { setNeedsDisplay() }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // Total Duration in seconds
+    var totalDuration: Double = 1.0 {
+        didSet { setNeedsDisplay() }
     }
     
     let dashHeight: CGFloat = 4.0
-    let timeCodeColor = UIColor(.black).cgColor
-    let trackLine = UIColor.gray.cgColor
+    let timeCodeColor = UIColor.black.cgColor
+    let trackLineColor = UIColor.gray.cgColor
     let viewedColor = UIColor.white.cgColor
     
     override func draw(_ rect: CGRect) {
-        let context = UIGraphicsGetCurrentContext()
+        guard let context = UIGraphicsGetCurrentContext() else { return }
         
-        let viewedX = rect.size.width * CGFloat(value)
+        let viewedX = rect.size.width * viewedProgress
         
-        // Slider Color
-        context?.setFillColor(trackLine)
-        let trackLine = CGRect(x: 0, y: (rect.size.height - dashHeight) / 2, width: rect.size.width, height: dashHeight)
-        context?.fill(trackLine)
+        // Base Track
+        context.setFillColor(trackLineColor)
+        let trackLineRect = CGRect(x: 0, y: (rect.size.height - dashHeight) / 2, width: rect.size.width, height: dashHeight)
+        context.fill(trackLineRect)
         
-        // Viewed slider color
-        context?.setFillColor(viewedColor)
-        let viewedLine = CGRect(x: 0, y: (rect.size.height - dashHeight) / 2, width: viewedX, height: dashHeight)
-        context?.fill(viewedLine)
+        // Viewed Progress Track
+        context.setFillColor(viewedColor)
+        let viewedLineRect = CGRect(x: 0, y: (rect.size.height - dashHeight) / 2, width: viewedX, height: dashHeight)
+        context.fill(viewedLineRect)
         
-        let totalDuration = CMTimeGetSeconds(
-            avPlayer.currentItem?.asset.duration ?? CMTime(seconds: 0, preferredTimescale: 1)
-        )
-        
+        // Timecode Markers
         for timecode in timecodes {
+            guard totalDuration > 0 else { continue }
             let x = CGFloat(timecode.time.seconds / totalDuration) * rect.size.width
-            let dashRect = CGRect(x: x, y: (rect.size.height - dashHeight) / 2, width: 4, height: dashHeight)
-            context?.setFillColor(timeCodeColor)
-            context?.fill(dashRect)
+            let dashRect = CGRect(x: x, y: (rect.size.height - dashHeight) / 2, width: 3, height: dashHeight)
+            context.setFillColor(timeCodeColor)
+            context.fill(dashRect)
         }
     }
 }

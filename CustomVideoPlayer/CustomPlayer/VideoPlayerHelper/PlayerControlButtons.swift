@@ -32,26 +32,7 @@ struct PlayerControlButtons: View {
     @State var currentTimeText: String = "00:00"
     
     // Other Properties
-    let timecodes: [Timecode]
-//    private var currentTimeText: String {
-//        if playFromPausePoint {
-//            print("Inside Current Time")
-//            if let currentPlayTime = currentPlayTime,
-//               currentPlayTime != .zero,
-//               let duration = avPlayer.currentItem?.duration.seconds,
-//               !isPlayerFullScreen,
-//               duration > 0 {
-//                let currentTimeInSeconds = currentPlayTime.seconds
-//                return formatTime(currentTimeInSeconds)
-//            }
-//        }
-//        if let duration = avPlayer.currentItem?.duration.seconds {
-//            let currentTimeInSeconds = Double(sliderValue) * duration
-//            return formatTime(currentTimeInSeconds)
-//        }
-//        return "00.00"
-//    }
-    
+    let timecodes: [Timecode]    
     private var timeLeftText: String {
         if let duration = avPlayer.currentItem?.duration.seconds {
             let totalTimeInSeconds = duration

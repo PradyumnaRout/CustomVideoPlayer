@@ -13,6 +13,9 @@ struct ContentView: View {
     @State private var path = NavigationPath()
     @State private var playFromPausePoint: Bool = false
     
+    let publisher = StringPublisher(inputValue: "hello world")
+    let subscriber = StringSubscriber()
+
     var body: some View {
         NavigationStack(path: $path) {
             VStack(spacing: 10) {
@@ -28,6 +31,9 @@ struct ContentView: View {
             .navigationTitle("Play Video")
             .navigationDestination(for: PlayerModel.self) { model in
                 VideoHome(model: model, path: $path, playFromPausePoint: $playFromPausePoint)
+            }
+            .onAppear {
+                publisher.subscribe(subscriber)
             }
         }
     }
