@@ -28,6 +28,7 @@ struct PlayerSliderView: UIViewRepresentable {
     
     func makeUIView(context: UIViewRepresentableContext<PlayerSliderView>) -> UISlider {
         
+//        let dashedSlider = DashedSlider(avPlayer: avPlayer, timecodes: timecodes)
         let dashedSlider = DashedSliderView()
         dashedSlider.totalDuration = CMTimeGetSeconds(avPlayer.currentItem?.asset.duration ?? CMTime(seconds: 0, preferredTimescale: 1))
         dashedSlider.timecodes =  timecodes
